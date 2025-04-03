@@ -38,8 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('userData', JSON.stringify({ email, name: 'Пользователь' }));
 
+        // Закрываем модальное окно и перенаправляем на страницу личного кабинета
         loginModal.style.display = 'none';
-        loginBtn.style.display = 'none';
+        window.location.href = 'profile.html';
     });
 
     // Обработка сокращения URL

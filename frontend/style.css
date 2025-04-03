@@ -189,3 +189,129 @@ body {
     background-color: #000000;
     color: #ffffff;
 } 
+
+    .text-center {
+        text-align: center;
+        font-size: larger
+}
+
+/* Стили для личного кабинета */
+.profile-container {
+    width: 100%;
+    max-width: 900px;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.profile-container h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 500;
+}
+
+.tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #000000;
+    padding-bottom: 1rem;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    color: #000000;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    border-radius: 25px;
+}
+
+.tab-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.tab-btn.active {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.links-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.links-table th,
+.links-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #000000;
+}
+
+.links-table th {
+    font-weight: 500;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.links-table a {
+    color: #000000;
+    text-decoration: none;
+}
+
+.links-table a:hover {
+    text-decoration: underline;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: #000000;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+    color: #e53e3e;
+}
+
+.profile-form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.profile-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.profile-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.profile-form small {
+    display: block;
+    margin-top: 0.25rem;
+    color: #666;
+    font-size: 0.875rem;
+} 
