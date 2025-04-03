@@ -14,7 +14,7 @@ import { IsAliasValidationPipe } from "@pipes/ParamPipes"
 import { User } from "@user/entities/user.entity"
 import { UserService } from "@user/user.service"
 import { Response } from "express"
-import { CreateUrlDto, CreateUrlWithAuthDto } from "./dto/createUrl.dto"
+import { CreateUrlDto, CreateUrlWithAuthDto } from "./dto/create.dto"
 import { UrlService } from "./url.service"
 
 @Controller("url")

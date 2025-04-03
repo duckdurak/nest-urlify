@@ -1,7 +1,10 @@
+import { CustomUnauthorizedException } from "@exceptions/Unauthorized.exception"
 import { Injectable } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
+import { compare, genSalt, hash } from "bcrypt"
 import { Repository } from "typeorm"
-import { CreateByUsername } from "./dto/createBy.dto"
+import { CreateByUsername } from "./dto/create.dto"
+import { UpdatePasswordWithAuthDto } from "./dto/update.dto"
 import { User } from "./entities/user.entity"
 
 @Injectable()
@@ -31,5 +34,21 @@ export class UserService {
 		await this.usersRepository.save(user)
 
 		return user
+	}
+
+	async updatePassword(dto: UpdatePasswordWithAuthDto) {
+		const { old_password, new_password, userObject } = dto
+
+		if (!(await compare(old_password, userObject.password))) {
+			throw new CustomUnauthorizedException(
+				"Your password doesn't seem to be correct"
+			)
+		}
+
+		const salt = await genSalt()
+		const hashedPassword = await hash(new_password, salt)
+
+		userObject.password = hashedPassword
+		await this.usersRepository.save(userObject)
 	}
 }

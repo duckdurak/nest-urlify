@@ -2,7 +2,7 @@ import { CustomBadRequestException } from "@exceptions/BadRequest.exception"
 import { Injectable } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
-import { CreateUrlDto, CreateUrlWithAuthDto } from "./dto/createUrl.dto"
+import { CreateUrlDto, CreateUrlWithAuthDto } from "./dto/create.dto"
 import { Url } from "./entities/url.entity"
 
 @Injectable()
