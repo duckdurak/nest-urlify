@@ -1,8 +1,8 @@
+import { CustomBadRequestException } from "@exceptions/BadRequest.exception"
 import { Injectable } from "@nestjs/common"
-import { Cron } from "@nestjs/schedule"
 import { InjectRepository } from "@nestjs/typeorm"
-import { LessThan, Repository } from "typeorm"
-import { CreateUrlDto } from "./dto/createUrl.dto"
+import { Repository } from "typeorm"
+import { CreateUrlDto, CreateUrlWithAuthDto } from "./dto/createUrl.dto"
 import { Url } from "./entities/url.entity"
 
 @Injectable()
@@ -24,27 +24,51 @@ export class UrlService {
 		return result
 	}
 
-	public async createUrl(dto: CreateUrlDto): Promise<Url> {
-		const { url } = dto
+	public async createUrl(
+		dto: CreateUrlDto | CreateUrlWithAuthDto
+	): Promise<Url> {
 		const alias = this.makeAlias(6)
 
-		const urlObject = this.urlsRepository.create({ url, alias })
+		if (dto instanceof CreateUrlWithAuthDto) {
+			const { url, expiry_at, user } = dto
+			if (!expiry_at) {
+				throw new CustomBadRequestException("You have to set expiry date")
+			}
 
-		return await this.urlsRepository.save(urlObject)
+			const urlObject = this.urlsRepository.create({
+				url,
+				alias,
+				expiry_at,
+				user: user,
+			})
+
+			return await this.urlsRepository.save(urlObject)
+		} else {
+			const { url } = dto
+			const expiry_at = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+
+			const urlObject = this.urlsRepository.create({
+				url,
+				alias,
+				expiry_at,
+			})
+
+			return await this.urlsRepository.save(urlObject)
+		}
 	}
 
 	public async findOneByAlias(alias: string): Promise<Url | null> {
-		return await this.urlsRepository.findOneBy({ alias })
+		return alias
+			? await this.urlsRepository.findOne({ where: { alias } })
+			: null
 	}
 
-	@Cron("0 0 * * * *")
-	private async findAllExpiredAndDelete() {
-		const dayAgo = new Date(Date.now() - 1000 * 60 * 60 * 24)
-
-		const urlObjects = await this.urlsRepository.find({
-			where: { created_at: LessThan(dayAgo) },
-		})
-
-		await this.urlsRepository.remove(urlObjects)
+	public async findAllOfUser(user_id: string): Promise<Url[] | null> {
+		return user_id
+			? await this.urlsRepository.find({
+					relations: { user: true },
+					where: { user: { id: user_id } },
+				})
+			: null
 	}
 }

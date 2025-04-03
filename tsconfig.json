@@ -18,17 +18,18 @@
 		"strictBindCallApply": false,
 		"noFallthroughCasesInSwitch": false,
 		"paths": {
-			"@config/*": ["./src/config/*"],
-			"@database/*": ["./src/database/*"],
-			"@url/*": ["./src/url/*"],
-			"@user/*": ["./src/user/*"],
-			"@auth/*": ["./src/auth/*"],
-			"@jwt/*": ["./src/jwt/*"],
-			"@pipes/*": ["./src/pipes/*"],
-			"@cron/*": ["./src/cron/*"],
-			"@logger/*": ["./src/logger/*"],
-			"@middleware/*": ["./src/middleware/*"],
-			"@exceptions/*": ["./src/exceptions/*"]
+			"@config/*": ["src/config/*"],
+			"@database/*": ["src/database/*"],
+			"@url/*": ["src/url/*"],
+			"@user/*": ["src/user/*"],
+			"@auth/*": ["src/auth/*"],
+			"@jwt/*": ["src/jwt/*"],
+			"@pipes/*": ["src/pipes/*"],
+			"@cron/*": ["src/cron/*"],
+			"@logger/*": ["src/logger/*"],
+			"@middleware/*": ["src/middleware/*"],
+			"@exceptions/*": ["src/exceptions/*"],
+			"@decorators/*": ["src/decorators/*"]
 		}
 	}
 }

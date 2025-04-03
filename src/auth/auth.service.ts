@@ -1,4 +1,5 @@
-import { CustomUnauthorizedException } from "@exceptions/UnauthorizedException"
+import { CustomBadRequestException } from "@exceptions/BadRequest.exception"
+import { CustomUnauthorizedException } from "@exceptions/Unauthorized.exception"
 import { Injectable } from "@nestjs/common"
 import { JwtService } from "@nestjs/jwt"
 import { CreateByUsername } from "@user/dto/createBy.dto"
@@ -19,9 +20,7 @@ export class AuthService {
 	async signIn(dto: SignInDto): Promise<TSignInResponse | string> {
 		const { username, password } = dto
 
-		const user = await this.usersService.findOneByUsername({
-			username: username,
-		})
+		const user = await this.usersService.findOneByUsername(username)
 
 		if (!user) {
 			throw new CustomUnauthorizedException("Username or password is incorrect")
@@ -30,10 +29,10 @@ export class AuthService {
 		const isCorrect = await compare(password, user.password)
 
 		if (!isCorrect) {
-			return "Username or password is incorrect"
+			throw new CustomUnauthorizedException("Username or password is incorrect")
 		}
 
-		const payload: TJwtPayload = { id: user.id, user: user }
+		const payload: TJwtPayload = { id: user.id }
 		const jwtPayload = await this.jwtService.signAsync(payload)
 
 		const res: TSignInResponse = { access_token: jwtPayload, user: user }
@@ -44,12 +43,12 @@ export class AuthService {
 	async signUp(dto: SignUpDto): Promise<User | string> {
 		const { username, password } = dto
 
-		const user = await this.usersService.findOneByUsername({
-			username: username,
-		})
+		const user = await this.usersService.findOneByUsername(username)
 
 		if (user) {
-			return "User with such username is already exist"
+			throw new CustomBadRequestException(
+				"User with such username is already exist"
+			)
 		}
 
 		const salt = await genSalt()

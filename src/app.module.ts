@@ -1,6 +1,5 @@
 import { AuthModule } from "@auth/auth.module"
 import { ConfigurationModule } from "@config/config.module"
-import { CronModule } from "@cron/cron.module"
 import { DatabaseModule } from "@database/database.module"
 import { JwtModule } from "@jwt/jwt.module"
 import { RouteLoggerMiddleware } from "@middleware/route.logger"
@@ -13,7 +12,6 @@ import { UserModule } from "@user/user.module"
 		ConfigurationModule,
 		DatabaseModule,
 		JwtModule,
-		CronModule,
 		AuthModule,
 		UserModule,
 		UrlModule,

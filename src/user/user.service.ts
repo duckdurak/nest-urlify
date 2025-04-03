@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
 import { CreateByUsername } from "./dto/createBy.dto"
-import { FindOneByIdDto, FindOneByUsernameDto } from "./dto/findOneBy.dto"
 import { User } from "./entities/user.entity"
 
 @Injectable()
@@ -12,16 +11,12 @@ export class UserService {
 		private readonly usersRepository: Repository<User>
 	) {}
 
-	async findOneById(dto: FindOneByIdDto): Promise<User | null> {
-		const { id } = dto
-
-		return this.usersRepository.findOneBy({ id: id })
+	async findOneById(id: string): Promise<User | null> {
+		return id ? this.usersRepository.findOne({ where: { id: id } }) : null
 	}
 
-	async findOneByUsername(dto: FindOneByUsernameDto): Promise<User | null> {
-		const { username } = dto
-
-		return this.usersRepository.findOneBy({ username: username })
+	async findOneByUsername(username: string): Promise<User | null> {
+		return this.usersRepository.findOne({ where: { username: username } })
 	}
 
 	async createByUsername(dto: CreateByUsername) {
