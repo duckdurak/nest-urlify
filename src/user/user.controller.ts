@@ -4,6 +4,7 @@ import { Body, Controller, Post, Res, UseGuards } from "@nestjs/common"
 import { User } from "@user/entities/user.entity"
 import { UserService } from "@user/user.service"
 import { Response } from "express"
+import { TResponse } from "src/types"
 import { UpdatePasswordDto, UpdatePasswordWithAuthDto } from "./dto/update.dto"
 
 @Controller("user")
@@ -21,10 +22,12 @@ export class UserController {
 
 		await this.userService.updatePassword(new_dto)
 
-		return res.status(200).json({
+		const response: TResponse<null> = {
 			message: null,
 			error: "No Error",
 			statusCode: 200,
-		})
+		}
+
+		return res.status(200).json(response)
 	}
 }

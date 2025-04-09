@@ -3,10 +3,9 @@ import { CustomUnauthorizedException } from "@exceptions/Unauthorized.exception"
 import { Injectable } from "@nestjs/common"
 import { JwtService } from "@nestjs/jwt"
 import { CreateByUsername } from "@user/dto/create.dto"
-import { User } from "@user/entities/user.entity"
 import { UserService } from "@user/user.service"
 import { compare, genSalt, hash } from "bcrypt"
-import { TJwtPayload, TSignInResponse } from "src/types"
+import { TJwtPayload, TSignInResponse, TSignUpResponse } from "src/types"
 import { SignInDto } from "./dto/signIn.dto"
 import { SignUpDto } from "./dto/signUp.dto"
 
@@ -17,7 +16,7 @@ export class AuthService {
 		private jwtService: JwtService
 	) {}
 
-	async signIn(dto: SignInDto): Promise<TSignInResponse | string> {
+	async signIn(dto: SignInDto): Promise<TSignInResponse> {
 		const { username, password } = dto
 
 		const user = await this.usersService.findOneByUsername(username)
@@ -40,7 +39,7 @@ export class AuthService {
 		return res
 	}
 
-	async signUp(dto: SignUpDto): Promise<User | string> {
+	async signUp(dto: SignUpDto): Promise<TSignUpResponse> {
 		const { username, password } = dto
 
 		const user = await this.usersService.findOneByUsername(username)
@@ -61,6 +60,14 @@ export class AuthService {
 
 		const created_user = await this.usersService.createByUsername(create_dto)
 
-		return created_user
+		const payload: TJwtPayload = { id: created_user.id }
+		const jwtPayload = await this.jwtService.signAsync(payload)
+
+		const res: TSignUpResponse = {
+			access_token: jwtPayload,
+			user: created_user,
+		}
+
+		return res
 	}
 }

@@ -31,5 +31,7 @@
 			"@exceptions/*": ["src/exceptions/*"],
 			"@decorators/*": ["src/decorators/*"]
 		}
-	}
+	},
+	"include": ["src/"],
+	"exclude": ["web/", "frontend/"]
 }

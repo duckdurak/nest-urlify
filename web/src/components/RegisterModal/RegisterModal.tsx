@@ -1,8 +1,12 @@
 import { useForm } from "react-hook-form"
+import { BACKEND_API } from "../../axios"
+import { useAppDispatch } from "../../hooks/useAppDispatch"
+import { loginUser } from "../../store/slices/user.slice"
+import { TResponse, TSignUpResponse } from "../../types"
 import { Button } from "../Button/Button"
+import { Input } from "../Input/Input"
 import { Modal } from "../Modal/Modal"
 import { ModalHeader } from "../Modal/ModalHeader"
-import { ModalInput } from "../Modal/ModalInput"
 
 type Props = {
 	isVisible: boolean
@@ -13,7 +17,7 @@ type Props = {
 type TForm = {
 	username: string
 	password: string
-	retry_password: string
+	retry_password?: string
 }
 
 export const RegisterModal: React.FC<Props> = ({
@@ -21,10 +25,33 @@ export const RegisterModal: React.FC<Props> = ({
 	setIsVisible,
 	openLogin,
 }) => {
+	const dispatch = useAppDispatch()
 	const form = useForm<TForm>()
 
-	const onSubmit = (values: TForm) => {
-		console.log(values)
+	const onSubmit = async (values: TForm) => {
+		if (values.password !== values.retry_password) {
+			form.resetField("retry_password")
+			alert("Пароли должны совпадать!")
+			return
+		}
+
+		delete values.retry_password
+		const response = (await BACKEND_API.post("/api/auth/register", values).then(
+			res => {
+				return res.data
+			},
+			res => {
+				return res.response?.data
+			}
+		)) as TResponse<TSignUpResponse>
+
+		if (response.statusCode === 200) {
+			form.reset()
+			window.localStorage.setItem("access_token", response.message.access_token)
+			dispatch(loginUser(response.message.user))
+		} else {
+			alert(response.error)
+		}
 	}
 
 	const openLoginModal = () => {
@@ -43,9 +70,9 @@ export const RegisterModal: React.FC<Props> = ({
 			setIsVisible={setIsVisible}
 		>
 			<ModalHeader title="Регистрация" setIsVisible={setIsVisible} />
-			<ModalInput name="username" placeholder="Логин" type="text" />
-			<ModalInput name="password" placeholder="Пароль" type="password" />
-			<ModalInput
+			<Input name="username" placeholder="Логин" type="text" />
+			<Input name="password" placeholder="Пароль" type="password" />
+			<Input
 				name="retry_password"
 				placeholder="Пароль повторно"
 				type="password"

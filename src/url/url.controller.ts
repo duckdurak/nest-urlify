@@ -1,5 +1,6 @@
 import { AuthGuard, AuthGuardStrict } from "@auth/auth.guard"
 import { UserContext } from "@decorators/UserContext.decorator"
+import { CustomBadRequestException } from "@exceptions/BadRequest.exception"
 import { CustomNotFoundException } from "@exceptions/NotFound.exception"
 import {
 	Body,
@@ -7,6 +8,7 @@ import {
 	Get,
 	Param,
 	Post,
+	Query,
 	Res,
 	UseGuards,
 } from "@nestjs/common"
@@ -45,14 +47,36 @@ export class UrlController {
 
 	@UseGuards(AuthGuardStrict)
 	@Get()
-	async findUrlsOfUser(@UserContext() userObject: User, @Res() res: Response) {
-		const urlsObject = await this.urlService.findAllOfUser(userObject.id)
+	async findUrlsOfUser(
+		@UserContext() userObject: User,
+		@Query("page") page: number,
+		@Query("perPage") perPage: number,
+		@Res() res: Response
+	) {
+		if (!page || !perPage) {
+			throw new CustomBadRequestException(
+				"You must supply current page and count per page!"
+			)
+		}
+		const urlsObject = await this.urlService.findByPageOfUser(
+			userObject.id,
+			page,
+			perPage
+		)
+
+		const totalCount = await this.urlService.getCountOfUser(userObject.id)
+
 		for (const urlObject of urlsObject!) {
 			delete urlObject.user
 		}
 
 		return res.status(200).json({
-			message: urlsObject,
+			message: {
+				urls: urlsObject,
+				totalCount,
+				page,
+				perPage,
+			},
 			error: "No Error",
 			statusCode: 200,
 		})

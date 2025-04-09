@@ -63,11 +63,26 @@ export class UrlService {
 			: null
 	}
 
-	public async findAllOfUser(user_id: string): Promise<Url[] | null> {
+	public async getCountOfUser(user_id: string): Promise<number> {
+		return user_id
+			? await this.urlsRepository.count({
+					relations: { user: true },
+					where: { user: { id: user_id } },
+				})
+			: 0
+	}
+
+	public async findByPageOfUser(
+		user_id: string,
+		page: number,
+		perPage: number
+	): Promise<Url[] | null> {
 		return user_id
 			? await this.urlsRepository.find({
 					relations: { user: true },
 					where: { user: { id: user_id } },
+					skip: (page - 1) * perPage,
+					take: perPage,
 				})
 			: null
 	}
