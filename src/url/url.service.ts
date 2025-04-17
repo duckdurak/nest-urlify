@@ -57,6 +57,23 @@ export class UrlService {
 		}
 	}
 
+	public async deleteByAlias(alias: string): Promise<boolean> {
+		if (alias) {
+			const urlObject = await this.urlsRepository.findOne({
+				where: { alias },
+			})
+
+			if (urlObject) {
+				await this.urlsRepository.remove([urlObject], {})
+				return true
+			} else {
+				return false
+			}
+		}
+
+		return false
+	}
+
 	public async findOneByAlias(alias: string): Promise<Url | null> {
 		return alias
 			? await this.urlsRepository.findOne({ where: { alias } })
@@ -83,7 +100,27 @@ export class UrlService {
 					where: { user: { id: user_id } },
 					skip: (page - 1) * perPage,
 					take: perPage,
+					order: { created_at: "DESC" },
 				})
 			: null
+	}
+
+	public async findOneByAliasAndUpdate(
+		alias: string,
+		expiry_at: string
+	): Promise<Url | null> {
+		if (alias) {
+			const urlObject = await this.urlsRepository.findOne({ where: { alias } })
+
+			if (!urlObject) {
+				return null
+			}
+
+			urlObject.expiry_at = new Date(expiry_at)
+
+			return await this.urlsRepository.save(urlObject)
+		} else {
+			return null
+		}
 	}
 }

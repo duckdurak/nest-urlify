@@ -5,9 +5,16 @@ import { NotFoundPage } from "./pages/NotFoundPage/NotFoundPage"
 import { LinksPage } from "./pages/Profile/LinksPage"
 import { ProfilePage } from "./pages/Profile/ProfilePage"
 import { ProtectedPage } from "./pages/ProtectedPage/ProtectedPage"
+import { RedirectorPage } from "./pages/RedirectorPage/RedirectorPage"
 import { TRoute } from "./types"
 
 export const routes: TRoute[] = [
+	{
+		path: "/:alias",
+		element: <RedirectorPage />,
+		icon: <></>,
+		title: "Страница не найдена",
+	},
 	{
 		path: "/",
 		element: <IndexPage />,

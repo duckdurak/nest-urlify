@@ -1,3 +1,5 @@
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { FormProvider, useForm } from "react-hook-form"
 import { BACKEND_API } from "../../axios"
 import { useAppSelector } from "../../hooks/useAppSelector"
@@ -23,7 +25,11 @@ export const UrlShortener: React.FC = () => {
 		)) as TResponse<TUrl>
 
 		if (response.statusCode === 200) {
-			form.reset()
+			form.setValue(
+				"url",
+				`${document.location.protocol}//${document.location.host}/${response.message.alias}`
+			)
+			form.resetField("expiry_at")
 		} else {
 			alert(response.error)
 		}
@@ -41,20 +47,23 @@ export const UrlShortener: React.FC = () => {
 					<Input
 						name="url"
 						type="text"
-						className="w-full px-6 py-2 border border-black rounded-full outline-none"
-						title="Ссылка"
+						className="w-full h-[46px] px-6 py-2 border border-black rounded-full outline-none"
+						title={isLoggedIn ? "Ссылка" : ""}
 						placeholder="Введи свою ссылку..."
-						button
+						button_icon={<FontAwesomeIcon icon={faArrowRight} />}
+						disabled={form.formState.isSubmitSuccessful}
 					/>
 
-					{isLoggedIn && (
-						<Input
-							name="expiry_at"
-							type="datetime-local"
-							title="Дата истечения"
-							className=" w-fit px-6 py-2 border border-black rounded-full outline-none text-base"
-						/>
-					)}
+					<div className="flex space-x-6 w-full">
+						{isLoggedIn && (
+							<Input
+								name="expiry_at"
+								type="datetime-local"
+								title="Дата истечения"
+								className="w-fit h-[46px] px-6 py-2 border border-black rounded-full outline-none text-base"
+							/>
+						)}
+					</div>
 				</div>
 			</form>
 		</FormProvider>

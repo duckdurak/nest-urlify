@@ -17,6 +17,7 @@ type UserState = {
 	user: TUser
 	isLoading: boolean
 	isAuth: boolean
+	isInitialCheckComplete: boolean
 	error: string
 }
 
@@ -24,6 +25,7 @@ const initialState: UserState = {
 	user: {} as TUser,
 	isLoading: false,
 	isAuth: false,
+	isInitialCheckComplete: false,
 	error: "",
 }
 
@@ -40,6 +42,7 @@ const userSlice = createSlice({
 			state.user = {} as TUser
 			state.isLoading = false
 			state.isAuth = false
+			state.isInitialCheckComplete = false
 			state.error = ""
 		},
 	},
@@ -53,8 +56,15 @@ const userSlice = createSlice({
 			if (type) {
 				state.user = res.payload.message
 			} else {
+				window.localStorage.removeItem("access_token")
 				state.error = res.payload.error
+				state.user = {} as TUser
+				state.isLoading = false
+				state.isAuth = false
+				state.isInitialCheckComplete = false
+				state.error = ""
 			}
+			state.isInitialCheckComplete = true
 			state.isAuth = type
 			state.isLoading = false
 		})

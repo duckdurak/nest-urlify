@@ -6,16 +6,37 @@ services:
     image: postgres:latest
     environment:
       POSTGRES_DB: urlify
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 12345
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: UHgxTCauZrqf
       PGDATA: /var/lib/postgresql/data
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - ./database:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
       - local
-
+  backend:
+    build: .
+    environment:
+      PORT: 2000
+      DATABASE_HOST: postgres
+      DATABASE_USERNAME: user
+      DATABASE_PASSWORD: UHgxTCauZrqf
+      DATABASE_NAME: urlify
+      JWT_SECRET: fWxvvXgXkA9W
+    depends_on:
+      - postgres
+    networks:
+      - local
+  frontend:
+    build: ./web
+    depends_on:
+      - postgres
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - local
   pgadmin4:
     image: elestio/pgadmin:latest
     environment:

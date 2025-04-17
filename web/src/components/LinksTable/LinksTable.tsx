@@ -1,7 +1,16 @@
-import { useEffect } from "react"
+import { faEdit, faRemove } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { useEffect, useState } from "react"
+import { BACKEND_API } from "../../axios"
 import { useAppDispatch } from "../../hooks/useAppDispatch"
 import { useAppSelector } from "../../hooks/useAppSelector"
-import { getUrls, setPage } from "../../store/slices/links.slice"
+import {
+	deleteUrlFromSlice,
+	getUrls,
+	setPageUrl,
+} from "../../store/slices/links.slice"
+import { TResponse, TUrl } from "../../types"
+import { ChangeExpiryDateModal } from "../ChangeExpiryDateModal/ChangeExpiryDateModal"
 import { Pagination } from "../Pagination/Pagination"
 
 type Props = {}
@@ -9,7 +18,8 @@ type Props = {}
 export const LinksTable: React.FC<Props> = () => {
 	const dispatch = useAppDispatch()
 
-	// const isLoggedIn = useAppSelector(state => state.user.isAuth)
+	const [changeExpiry, setChangeExpiry] = useState(false)
+	const [url, setUrl] = useState({} as TUrl)
 	const urls = useAppSelector(state => state.urls.urls)
 	const isLoading = useAppSelector(state => state.urls.isLoading)
 	const currentPage = useAppSelector(state => state.urls.currentPage)
@@ -20,8 +30,35 @@ export const LinksTable: React.FC<Props> = () => {
 		dispatch(getUrls({ page: currentPage, perPage: perPage }))
 	}, [currentPage])
 
+	const deleteUrl = async (alias: string) => {
+		const response = (await BACKEND_API.delete("/api/url/" + alias).then(
+			res => {
+				return res.data
+			},
+			res => {
+				return res.response?.data
+			}
+		)) as TResponse<null>
+
+		if (response.statusCode === 200) {
+			dispatch(deleteUrlFromSlice(alias))
+		} else {
+			alert(response.message)
+		}
+	}
+
+	const openChangeExpiryModal = (url: TUrl) => {
+		setUrl(url)
+		setChangeExpiry(v => !v)
+	}
+
 	return (
 		<div className="w-full overflow-x-auto">
+			<ChangeExpiryDateModal
+				url={url}
+				isVisible={changeExpiry}
+				setIsVisible={setChangeExpiry}
+			/>
 			<table className="w-full border-collapse text-sm">
 				<thead>
 					<tr className="border-b border-black">
@@ -39,7 +76,18 @@ export const LinksTable: React.FC<Props> = () => {
 						urls.map((url, key) => (
 							<tr key={key}>
 								<th className="p-3 font-normal">{key + 1}</th>
-								<th className="p-3 font-normal">Скопировать</th>
+								<th
+									onClick={() =>
+										navigator.clipboard.writeText(
+											`${document.location.protocol}//${document.location.host}/${url.alias}`
+										)
+									}
+									className="p-3 font-normal"
+								>
+									<p className="cursor-pointer hover:text-blue-500">
+										Скопировать
+									</p>
+								</th>
 								<th className="p-3 font-normal">{url.url}</th>
 								<th className="p-3 font-normal">{url.clicks}</th>
 								<th className="p-3 font-normal">
@@ -48,7 +96,18 @@ export const LinksTable: React.FC<Props> = () => {
 								<th className="p-3 font-normal">
 									{new Date(url.expiry_at).toDateString()}
 								</th>
-								<th className="p-3 font-normal"></th>
+								<th className="p-3 font-normal">
+									<FontAwesomeIcon
+										className="text-blue-500 cursor-pointer"
+										icon={faEdit}
+										onClick={() => openChangeExpiryModal(url)}
+									/>
+									<FontAwesomeIcon
+										className="ml-2 text-red-500 cursor-pointer"
+										icon={faRemove}
+										onClick={() => deleteUrl(url.alias)}
+									/>
+								</th>
 							</tr>
 						))}
 				</tbody>
@@ -59,7 +118,7 @@ export const LinksTable: React.FC<Props> = () => {
 					pageSize={perPage}
 					siblingCount={1}
 					currentPage={currentPage}
-					onChange={setPage}
+					onChange={setPageUrl}
 				/>
 			)}
 		</div>

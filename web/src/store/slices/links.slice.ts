@@ -40,8 +40,29 @@ const urlsSlice = createSlice({
 	name: "urls",
 	initialState,
 	reducers: {
-		setPage: (state, payload: PayloadAction<number>) => {
+		setPageUrl: (state, payload: PayloadAction<number>) => {
 			state.currentPage = payload.payload
+		},
+		deleteUrlFromSlice: (state, payload: PayloadAction<string>) => {
+			const position = state.urls.findIndex(
+				url => url.alias === payload.payload
+			)
+
+			if (position !== -1) {
+				state.urls.splice(position, 1)
+			}
+		},
+		updateUrlFromSlice: (
+			state,
+			payload: PayloadAction<{ alias: string; expiry_at: string }>
+		) => {
+			const position = state.urls.findIndex(
+				url => url.alias === payload.payload.alias
+			)
+
+			if (position !== -1) {
+				state.urls[position].expiry_at = payload.payload.expiry_at
+			}
 		},
 	},
 	extraReducers: builder => {
@@ -63,4 +84,5 @@ const urlsSlice = createSlice({
 })
 
 export const urlsReducer = urlsSlice.reducer
-export const { setPage } = urlsSlice.actions
+export const { setPageUrl, deleteUrlFromSlice, updateUrlFromSlice } =
+	urlsSlice.actions

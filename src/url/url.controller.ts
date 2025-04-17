@@ -5,9 +5,11 @@ import { CustomNotFoundException } from "@exceptions/NotFound.exception"
 import {
 	Body,
 	Controller,
+	Delete,
 	Get,
 	Param,
 	Post,
+	Put,
 	Query,
 	Res,
 	UseGuards,
@@ -17,6 +19,7 @@ import { User } from "@user/entities/user.entity"
 import { UserService } from "@user/user.service"
 import { Response } from "express"
 import { CreateUrlDto, CreateUrlWithAuthDto } from "./dto/create.dto"
+import { UpdateUrlDto } from "./dto/update.dto"
 import { UrlService } from "./url.service"
 
 @Controller("url")
@@ -89,7 +92,7 @@ export class UrlController {
 	) {
 		const urlObject = await this.urlService.findOneByAlias(alias)
 
-		if (!urlObject) {
+		if (!urlObject || Date.now() >= new Date(urlObject.expiry_at).getTime()) {
 			throw new CustomNotFoundException(
 				"The requested url wasn't found on the server"
 			)
@@ -99,6 +102,52 @@ export class UrlController {
 
 		return res.status(200).json({
 			message: { url, expiry_at },
+			error: "No Error",
+			statusCode: 200,
+		})
+	}
+
+	@Delete(":alias")
+	async findOneAndRemoveUrl(
+		@Param("alias", IsAliasValidationPipe) alias: string,
+		@Res() res: Response
+	) {
+		const isDeleted = await this.urlService.deleteByAlias(alias)
+
+		if (!isDeleted) {
+			throw new CustomNotFoundException(
+				"The requested url wasn't found on the server"
+			)
+		}
+
+		return res.status(200).json({
+			message: null,
+			error: "No Error",
+			statusCode: 200,
+		})
+	}
+
+	@Put(":alias")
+	async findOneAndUpdateUrl(
+		@Param("alias", IsAliasValidationPipe) alias: string,
+		@Body() dto: UpdateUrlDto,
+		@Res() res: Response
+	) {
+		const { expiry_at } = dto
+
+		const urlObject = await this.urlService.findOneByAliasAndUpdate(
+			alias,
+			expiry_at
+		)
+
+		if (!urlObject) {
+			throw new CustomNotFoundException(
+				"The requested url wasn't found on the server"
+			)
+		}
+
+		return res.status(200).json({
+			message: urlObject,
 			error: "No Error",
 			statusCode: 200,
 		})
