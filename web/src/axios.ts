@@ -2,7 +2,7 @@ import axios from "axios"
 
 const BACKEND =
 	!process.env.NODE_ENV || process.env.NODE_ENV === "development"
-		? "http://localhost:8000/"
+		? "http://localhost:2000/"
 		: ""
 
 export const BACKEND_API = axios.create({

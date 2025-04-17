@@ -54,16 +54,14 @@ export const UrlShortener: React.FC = () => {
 						disabled={form.formState.isSubmitSuccessful}
 					/>
 
-					<div className="flex space-x-6 w-full">
-						{isLoggedIn && (
-							<Input
-								name="expiry_at"
-								type="datetime-local"
-								title="Дата истечения"
-								className="w-fit h-[46px] px-6 py-2 border border-black rounded-full outline-none text-base"
-							/>
-						)}
-					</div>
+					{isLoggedIn && (
+						<Input
+							name="expiry_at"
+							type="datetime-local"
+							title="Дата истечения"
+							className="w-full md:w-fit h-[46px] px-6 py-2 border border-black rounded-full outline-none text-base"
+						/>
+					)}
 				</div>
 			</form>
 		</FormProvider>

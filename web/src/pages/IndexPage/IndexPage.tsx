@@ -32,7 +32,9 @@ export const IndexPage: React.FC = () => {
 			) : (
 				<div className="flex w-full h-full justify-center items-center">
 					<div className="flex flex-col space-y-6 w-[80%] max-w-[900px] p-6 rounded-2xl">
-						<h1 className="text-center text-3xl">Сократи свою ссылку</h1>
+						<h1 className="text-center text-2xl md:text-3xl">
+							Сократи свою ссылку
+						</h1>
 						<UrlShortener />
 					</div>
 				</div>

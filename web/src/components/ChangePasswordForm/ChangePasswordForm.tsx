@@ -11,7 +11,7 @@ type TForm = {
 	new_password: string
 }
 
-export const ChangePasswordForm: React.FC<Props> = ({}) => {
+export const ChangePasswordForm: React.FC<Props> = () => {
 	const form = useForm<TForm>()
 
 	const onSubmit = async (values: TForm) => {
@@ -34,7 +34,7 @@ export const ChangePasswordForm: React.FC<Props> = ({}) => {
 
 	return (
 		<FormProvider {...form}>
-			<div className="w-full max-w-[50%] m-auto">
+			<div className="w-full md:max-w-[50%] m-auto">
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
 					className="flex flex-col space-y-4"

@@ -75,9 +75,18 @@ export class UrlService {
 	}
 
 	public async findOneByAlias(alias: string): Promise<Url | null> {
-		return alias
-			? await this.urlsRepository.findOne({ where: { alias } })
-			: null
+		if (alias) {
+			const urlObject = await this.urlsRepository.findOne({ where: { alias } })
+
+			if (!urlObject) {
+				return null
+			}
+
+			urlObject.clicks += 1
+			return await this.urlsRepository.save(urlObject)
+		} else {
+			return null
+		}
 	}
 
 	public async getCountOfUser(user_id: string): Promise<number> {

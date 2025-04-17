@@ -25,12 +25,12 @@ export const Header: React.FC<Props> = () => {
 	const user = useAppSelector(state => state.user.user)
 
 	return isAuth ? (
-		<header className="flex w-full justify-end md:justify-between items-center absolute top-0 right-0 p-6">
+		<header className="flex w-full justify-between items-center absolute top-0 right-0 p-6">
 			<img
 				onClick={() => navigate("/")}
 				src="/logo.png"
 				alt="logo"
-				className="w-fit h-12 hidden md:block cursor-pointer"
+				className="h-12 cursor-pointer"
 			/>
 			<div className="flex items-center space-x-4">
 				<p className="text-lg hidden md:block">Привет, {user.username}!</p>
@@ -43,12 +43,12 @@ export const Header: React.FC<Props> = () => {
 			</div>
 		</header>
 	) : (
-		<header className="flex w-full justify-end md:justify-between items-center absolute top-0 right-0 p-6">
+		<header className="flex w-full justify-between items-center absolute top-0 right-0 p-6">
 			<img
 				onClick={() => navigate("/")}
 				src="/logo.png"
 				alt="logo"
-				className="w-fit h-12 hidden md:block cursor-pointer"
+				className="h-12 cursor-pointer"
 			/>{" "}
 			<div className="flex items-center space-x-4">
 				<Button
